@@ -41,7 +41,7 @@ stages:
   jobs:
   - deployment: Deploy
     displayName: Deploy to AKS
-    environment: 'base.default'
+    environment: 'base_developp.default'
     pool: 
       vmImage: ubuntu-latest
     strategy:
