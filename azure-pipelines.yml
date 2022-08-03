@@ -20,12 +20,11 @@ stages:
     - task: Docker@2
       displayName: Build an image
       inputs:
-        containerRegistry: 'BaseContainerRegistry0'
+        containerRegistry: 'BaseRegistry0'
         repository: '$(imageRepo)'
         command: 'buildAndPush'
         Dockerfile: '$(Build.SourcesDirectory)/app/Dockerfile'
-        tags: |
-          $(tag)
+        tags: '$(tag)'
     - task: PublishPipelineArtifact@1
       inputs:
         targetPath: '$(Pipeline.Workspace)/s/kubernetes'
@@ -42,7 +41,7 @@ stages:
   jobs:
   - deployment: Deploy
     displayName: Deploy to AKS
-    environment: 'k8sdev.default'
+    environment: 'base.default'
     pool: 
       vmImage: ubuntu-latest
     strategy:
@@ -57,10 +56,11 @@ stages:
           - task: KubernetesManifest@0
             inputs:
               action: 'createSecret'
+              kubernetesServiceConnection: 'BaseCluster0'
               namespace: 'default'
               secretType: 'dockerRegistry'
               secretName: '$(acrsecret)'
-              dockerRegistryEndpoint: 'BaseContainerRegistry0'
+              dockerRegistryEndpoint: 'BaseRegistry0'
           - task: replacetokens@3
             displayName: Replace Tokens
             inputs:
